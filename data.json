@@ -29,5 +29,18 @@
       "lunes a viernes - tarde",
       "sábados"
     ]
-  }
+  },
+  "conditions":[
+    "*CONDICIONES:*",
+    "",
+    "1. Dependiendo del lugar donde se llevará a cabo la jornada de brigada, se solicitará el transporte del grupo de practicantes de la academia Francia Belleza y Diseño Cauca, partiendo de la institución sede principal carrera 4 # 0 – 66 Barrio Vásquez Cobo – al lugar de la brigada, y una vez finalizada la actividad, transporte de regreso a la institución.",
+    "2. Es importante el número de usuarios que recibirán el servicio, ya que los servicios son prestados por grupos de practicantes, acompañados por un instructor, por esta razón no se puede llevar la mitad de un grupo y dejar la otra mitad en la institución, mínimo grupo de 15 practicantes.",
+    "3. El lugar designado para la realización de la actividad debe ser cubierto, por condiciones de lluvia o sol excesivo.",
+    "4. Dependiendo del número de practicantes coordinado previamente con la institución a asistir a la jornada de brigada, será el número de sillas tanto para modelos (usuarios) como para practicantes:",
+    "     • PELUQUERÍA: solo requiere silla para modelo (usuario). – mesa para ubicar la herramienta",
+    "     • MANICURE: silla para practicante, silla para modelo, mesa para ubicar materiales",
+    "     • SERVICIOS DE CEJAS, HIGIENE FACIAL, MAQUILLAJE: silla para practicante, silla para modelo, mesa para ubicar materiales.",
+    "5. Puntos de energía para conectar las herramientas o extensiones eléctricas. ",
+    "6. Dependiendo si la actividad se extiende por ambas jornadas, (opcional) refrigerio para las practicantes."
+  ]
 }

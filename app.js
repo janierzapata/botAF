@@ -14,7 +14,7 @@ const MongoAdapter = require("@bot-whatsapp/database/mongo");
 
 //* service
 const { getProgram, validateHour } = require("./services/service");
-const { costos, services } = require("./data.json");
+const { costos, services, conditions } = require("./data.json");
 
 //? Variables de entorno
 const IDLE = parseInt(process.env.IDLE);
@@ -93,17 +93,21 @@ const flowmenuprograms = addKeyword(EVENTS.ACTION).addAnswer(
         return returnToPrograms(gotoFlow);
       case "4":
         await state.update({ asesor: true });
-        const cb = () => {
-          setTimeout(async () => {
+
+        validateHour()
+          .then(async () => {
+            await flowDynamic(
+              "⏳ Serás redirigido con un asesor que te guiara con tu proceso de matrícula 🏃‍♂️"
+            );
+            setTimeout(async () => {
+              await state.update({ asesor: false });
+            }, ADVISER);
+          })
+          .catch(async (err) => {
+            await flowDynamic(err);
             await state.update({ asesor: false });
-          }, ADVISER);
-        };
-        const msj =
-          "⏳ Serás redirigido con un asesor que te guiara con tu proceso de matrícula 🏃‍♂️";
-        validateHour(flowDynamic, msj, cb).then(async () => {
-          await state.update({ asesor: false });
-          return gotoFlow(flowprograms);
-        });
+            return gotoFlow(flowprograms);
+          });
         break;
       case "0":
         return gotoFlow(flowmainmenu);
@@ -131,9 +135,7 @@ const flowscheduleservices = addKeyword(EVENTS.ACTION).addAnswer(
   ],
   { capture: true, idle: IDLE },
   async (ctx, { gotoFlow, fallBack, flowDynamic, state }) => {
-    console.log("ingreso");
     if (ctx?.idleFallBack) {
-      console.log("paila");
       return gotoFlow(flowexit);
     }
 
@@ -149,19 +151,21 @@ const flowscheduleservices = addKeyword(EVENTS.ACTION).addAnswer(
           asesor: true,
         });
 
-        const cb = () => {
-          setTimeout(async () => {
+        validateHour()
+          .then(async () => {
+            await flowDynamic(
+              "⏳ Serás redirigido con un asesor que te indicará las fechas disponibles 📅"
+            );
+            setTimeout(async () => {
+              await state.update({ asesor: false });
+            }, ADVISER);
+          })
+          .catch(async (err) => {
+            await flowDynamic(err);
             await state.update({ asesor: false });
-          }, ADVISER);
-        };
+            return gotoFlow(flowprograms);
+          });
 
-        const msj =
-          "⏳ Serás redirigido con un asesor que te indicará las fechas disponibles 📅";
-
-        validateHour(flowDynamic, msj, cb).then(async () => {
-          await state.update({ asesor: false });
-          return gotoFlow(flowservices);
-        });
         break;
       case "0":
         return gotoFlow(flowmainmenu);
@@ -190,49 +194,14 @@ const flowinstitutiondata = addKeyword(EVENTS.ACTION)
         );
       }
 
-      await state.update({ institutionData: { name: ctx.body } });
+      await state.update({
+        institutionData: {
+          ...state.getMyState().institutionData,
+          nameInstitution: ctx.body,
+        },
+      });
     }
   )
-  // .addAnswer(
-  //   ["Ingresa el nombre de la persona a cargo"],
-  //   { capture: true, idle: IDLE },
-        // async (ctx, { gotoFlow, fallBack, state }) => {
-  //     if (ctx?.idleFallBack) {
-  //       return gotoFlow(flowexit);
-  //     }
-
-  //     if (!regex.validacionNombre.test(ctx.body)) {
-  //       return fallBack(
-  //         "Por favor ingresa un nombre válido, *sin puntos, números o caracteres especiales*"
-  //       );
-  //     }
-
-  //     await state.update({ institutionData: { nameDependant: ctx.body } });
-  //   }
-  // )
-  // .addAnswer(
-  //   [
-  //     "Digita el número de contacto de la persona a cargo, sin indicador de pais. ",
-  //     " ",
-  //     "*Debe tener 10 digitos*",
-  //   ],
-  //   { capture: true, idle: IDLE },
-  //   async (ctx, { gotoFlow, fallBack, state }) => {
-  //     if (ctx?.idleFallBack) {
-  //       return gotoFlow(flowexit);
-  //     }
-
-  //     if (!regex.validacionContacto.test(ctx.body)) {
-  //       return fallBack(
-  //         "Por favor ingresa un número de contacto valido,",
-  //         "",
-  //         "*sin puntos, comas, letras o caracteres especiales*"
-  //       );
-  //     }
-
-  //     await state.update({ institutionData: { celDependant: ctx.body } });
-  //   }
-  // )
   .addAnswer(
     ["Ingresa el lugar donde se realizara la brigada"],
     { capture: true, idle: IDLE },
@@ -241,26 +210,106 @@ const flowinstitutiondata = addKeyword(EVENTS.ACTION)
         return gotoFlow(flowexit);
       }
 
-      await state.update({ institutionData: { celDependant: ctx.body } });
+      await state.update({
+        institutionData: {
+          ...state.getMyState().institutionData,
+          place: ctx.body,
+        },
+      });
     }
   )
-  .addAnswer([
-    "Ingresa la fecha estipulada para el evento (dd/mm/yyyy)",
-    `*Ejemplo: (${new Date().toLocaleString().split(",")[0]})*`,
-  ],
-  {capture:true, idle:IDLE},
-  (ctx, {})=>{
-    if (ctx?.idleFallBack) {
-      return gotoFlow(flowexit);
+  .addAnswer(
+    [
+      "Ingresa la fecha estipulada para el evento (dd/mm/yyyy)",
+      `*Ejemplo: (${new Date().toLocaleString().split(",")[0]})*`,
+    ],
+    { capture: true, idle: IDLE },
+    async (ctx, { fallBack, state }) => {
+      if (ctx?.idleFallBack) {
+        return gotoFlow(flowexit);
+      }
+
+      //TODO: Implementar el validador de fechas
+
+      await state.update({
+        institutionData: {
+          ...state.getMyState().institutionData,
+          date: ctx.body,
+        },
+      });
     }
-  }
-);
+  )
+  .addAnswer(
+    [
+      "Ingresa la cantidad de personas estimadas a atender",
+      `*Ejemplo: (${new Date().toLocaleString().split(",")[0]})*`,
+    ],
+    { capture: true, idle: IDLE },
+    async (ctx, { fallBack, state }) => {
+      if (ctx?.idleFallBack) {
+        return gotoFlow(flowexit);
+      }
 
+      if (!regex.validateNumber.test(ctx.body)) {
+        return fallBack(["Por favor ingresa una opción valida"]);
+      }
 
+      await state.update({
+        institutionData: {
+          ...state.getMyState().institutionData,
+          amount: ctx.body,
+        },
+      });
+    }
+  )
+  .addAnswer(
+    [
+      "Ingrese los servicios que desea realizar en el evento separado por comas (',').",
+      "",
+      "*Recuerde que los servicios disponibles son:",
+      "*  • PELUQUERIA*",
+      "*  • MANICURE*",
+      "*  • SERVICIOS DE CEJAS*",
+      "*  • HIGIENE FACIAL*",
+      "*  • MAQUILLAJE*",
+    ],
+    { capture: true, idle: IDLE },
+    async (ctx, { state, flowDynamic, gotoFlow }) => {
+      if (ctx?.idleFallBack) {
+        return gotoFlow(flowexit);
+      }
 
+      await state.update({
+        institutionData: {
+          ...state.getMyState().institutionData,
+          services: ctx.body,
+        },
+      });
 
+      await state.update({ asesor: true });
+   
 
+      validateHour()
+        .then(async () => {
+          await flowDynamic(
+            "*⏳🏃‍♂️ Serás redirigido con un asesor para confirmar el servicio 🏃‍♂️*"
+          );
+          setTimeout(async () => {
+            await state.update({ asesor: false });
+          }, ADVISER);
+        })
+        .catch(async (err) => {
+          await flowDynamic(err);
+          await state.update({ asesor: false });
+          return gotoFlow(flowprograms);
+        });
 
+      console.log(
+        "Este es mi estado al final de data institution",
+        state.getMyState()
+      );
+    }
+  );
 
 const flowprograms = addKeyword(EVENTS.ACTION).addAnswer(
   [
@@ -272,7 +321,6 @@ const flowprograms = addKeyword(EVENTS.ACTION).addAnswer(
     "",
     "8) Regresar al menú anterior",
     "9) Salir",
-    // TODO: Investigar la opcion de devolver al menu anterior
   ],
   { capture: true, idle: IDLE },
   async (ctx, { gotoFlow, fallBack, flowDynamic, state }) => {
@@ -368,24 +416,12 @@ const flowbrigades = addKeyword(EVENTS.ACTION)
     "La Academia Francia Belleza y Diseño Cauca, institución para el trabajo y desarrollo humano, legalmente constituida en la ciudad de Popayán desde el año 2005, con Licencia de Funcionamient#20161700124544 de 19 SEPTIEMBRE DE 2016, tiene un componente social, ofreciendo a la comunidade Popayán y municipios aledaños los SERVICIOS GRATUITOS en corte de cabello femenino, masculinmanicure tradicional, diseño de cejas entre otros",
   ])
   .addAnswer(
-    [
-      "*CONDICIONES:*",
-      "",
-      "1. Dependiendo del lugar donde se llevará a cabo la jornada de brigada, se solicitará el transporte del grupo de practicantes de la academia Francia Belleza y Diseño Cauca, partiendo de la institución sede principal carrera 4 # 0 – 66 Barrio Vásquez Cobo – al lugar de la brigada, y una vez finalizada la actividad, transporte de regreso a la institución.",
-      "2. Es importante el número de usuarios que recibirán el servicio, ya que los servicios son prestados por grupos de practicantes, acompañados por un instructor, por esta razón no se puede llevar la mitad de un grupo y dejar la otra mitad en la institución, mínimo grupo de 15 practicantes.",
-      "3. El lugar designado para la realización de la actividad debe ser cubierto, por condiciones de lluvia o sol excesivo.",
-      "4. Dependiendo del número de practicantes coordinado previamente con la institución a asistir a la jornada de brigada, será el número de sillas tanto para modelos (usuarios) como para practicantes:",
-      "     • PELUQUERÍA: solo requiere silla para modelo (usuario). – mesa para ubicar la herramienta",
-      "     • MANICURE: silla para practicante, silla para modelo, mesa para ubicar materiales",
-      "     • SERVICIOS DE CEJAS, HIGIENE FACIAL, MAQUILLAJE: silla para practicante, silla para modelo, mesa para ubicar materiales.",
-      "5. Puntos de energía para conectar las herramientas o extensiones eléctricas. ",
-      "6. Dependiendo si la actividad se extiende por ambas jornadas, (opcional) refrigerio para las practicantes.",
-    ],
+    conditions,
     null,
     (_, { gotoFlow }) => {
       setTimeout(() => {
         return gotoFlow(flowinstitutiondata);
-      }, 10000);
+      }, 3000);
     },
     [flowinstitutiondata]
   );
@@ -412,7 +448,6 @@ const flowmainmenu = addKeyword(EVENTS.ACTION).addAnswer(
       case "2":
         return gotoFlow(flowservices);
       case "3":
-        // TODO: Realizar la integracion del flujo para las Brigadas
         return gotoFlow(flowbrigades);
       case "9":
         return gotoFlow(flowexit);
@@ -490,7 +525,7 @@ const flowuserdata = addKeyword(EVENTS.ACTION)
         return gotoFlow(flowexit);
       }
 
-      if (!regex.valiIdentificacion.test(ctx.body)) {
+      if (!regex.dacionIdentificacion.test(ctx.body)) {
         return fallBack(
           "Por favor ingresa un documento valido, *sin puntos, comas, letras o caracteres especiales*"
         );
@@ -527,7 +562,7 @@ const flowuserdata = addKeyword(EVENTS.ACTION)
     [
       "¿En que ciudad, corregimiento o vereda te encuentras?",
       "",
-      "*Solo números, sin comas, puntos o caracteres especialesa*",
+      "*Sin números, comas, puntos o caracteres especialesa*",
     ],
     { capture: true, idle: IDLE },
 
@@ -546,10 +581,6 @@ const flowuserdata = addKeyword(EVENTS.ACTION)
         userData: { ...state.get("userData"), location: ctx.body },
       });
 
-      console.log(
-        "este es mi estado al final de el dataUser",
-        state.getMyState()
-      );
       return gotoFlow(flowmainmenu);
     },
     [flowmainmenu, flowexit]

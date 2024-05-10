@@ -15,33 +15,17 @@ const getProgram = (program) => {
   });
 };
 
-const validateHour = (flowDynamic, msj, cb) => {
-  return new Promise((resolve, reject)=>{
+const validateHour = () => {
+  return new Promise((resolve, reject) => {
     var ahora = new Date();
     var horaActual = ahora.getHours();
-  
-    if (horaActual >= 9 && horaActual < 22) {
-      (async () => {
-        await flowDynamic(msj);
-        cb != null && cb();
-      })();
-      
-      reject()
-      
-    }
-    
-    console.log("paso al reject");
-    (async () => {
-      await flowDynamic([
-        "*❌❌Estás fuera de los horarios de atención❌❌* \nRecuerda que nuestros horarios son de lunes a sábado, entre las 9 am y las 5 pm ",
-      ]);
-      setTimeout(() => {
-        resolve();
-      }, 3000);
-    })();
-    
-  })
-  
+
+    if (horaActual >= 9 && horaActual < 22) return resolve();
+
+    reject(
+      "*❌❌Estás fuera de los horarios de atención❌❌* \nRecuerda que nuestros horarios son de lunes a sábado, entre las 9 am y las 5 pm "
+    );
+  });
 };
 
 const validateDate = () => {
