@@ -1,0 +1,33 @@
+{
+  "costos": [
+    {
+      "title": "Semana (Mañana, Tarde, Extendido)",
+      "matricula": "_Matricula:_ 120.000",
+      "seguro": "_seguro estudiantil:_ 30.000",
+      "mensualidad": "_mensualidad:_ 190.000",
+      "completo": "_pago completo (7 meses):_ 1'200.000"
+    },
+    {
+      "title": "Sabados",
+      "matricula": "_Matricula:_ 120.000",
+      "seguro": "_seguro estudiantil:_ 30.000",
+      "mensualidad": "_mensualidad:_ 170.000",
+      "completo": "_pago completo (9 meses):_ 1'400.000"
+    }
+  ],
+  "services": {
+    "desc": [
+      "Manos y pies",
+      "Implantes",
+      "Tratamientos capilares",
+      "Higiene facial",
+      "Corte de cabello",
+      "Blower (Cepillado)"
+    ],
+    "schedules": [
+      "lunes a viernes - mañana",
+      "lunes a viernes - tarde",
+      "sábados"
+    ]
+  }
+}
