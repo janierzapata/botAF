@@ -30,7 +30,7 @@ const returnToPrograms = (gotoFlow) => {
 };
 
 //*  Declaramos las conexiones de Mongo
-const MONGO_DB_URI = "mongodb://0.0.0.0:27017";
+const MONGO_DB_URI = "mongodb://localhost:27017";
 const MONGO_DB_NAME = "db_bot";
 
 const flowexit = addKeyword(EVENTS.ACTION)
@@ -39,11 +39,11 @@ const flowexit = addKeyword(EVENTS.ACTION)
 
 const flowmenuprograms = addKeyword(EVENTS.ACTION).addAnswer(
   [
-    "Selecciona la accion que deseas realizar",
+    "Selecciona la acción que deseas realizar",
     "1) ¿Que se ve en este programa?",
     "2) Jornadas de estudio",
     "3) Costos ",
-    "4) matricularse",
+    "4) Matricularse",
     "",
     "0) Regresar al menú principal",
     "8) Regresar al menú anterior",
@@ -72,7 +72,7 @@ const flowmenuprograms = addKeyword(EVENTS.ACTION).addAnswer(
           str += `
           *${schedule.days}*
             *_Jornada:_*  ${schedule.time} 
-            *_Duracion:_* ${item.duration}
+            *_Duración:_* ${item.duration}
           `;
         });
 
@@ -97,7 +97,7 @@ const flowmenuprograms = addKeyword(EVENTS.ACTION).addAnswer(
         validateHour()
           .then(async () => {
             await flowDynamic(
-              "⏳ Serás redirigido con un asesor que te guiara con tu proceso de matrícula 🏃‍♂️"
+              "⏳ Serás redirigido con un asesor que te guiará con tu proceso de matrícula 🏃‍♂️"
             );
             setTimeout(async () => {
               await state.update({ asesor: false });
@@ -125,9 +125,9 @@ const flowscheduleservices = addKeyword(EVENTS.ACTION).addAnswer(
   [
     "¿En qué jornada deseas realizarte el procedimiento?",
     "",
-    "1) lunes a viernes - mañana",
-    "2) lunes a viernes - tarde",
-    "3) sábados",
+    "1) Lunes a viernes - mañana",
+    "2) Lunes a viernes - tarde",
+    "3) Sábados",
     "",
     "0) Regresar al menú principal",
     "8) Regresar al menú anterior",
@@ -313,7 +313,7 @@ const flowinstitutiondata = addKeyword(EVENTS.ACTION)
 
 const flowprograms = addKeyword(EVENTS.ACTION).addAnswer(
   [
-    "¿En que programa tecnico estas interesado?",
+    "¿En que programa técnico estas interesado?",
     "1) Cuidado estético de manos y pies",
     "2) Maquillaje artístico y decorativo",
     "3) Peluquería",
@@ -413,7 +413,7 @@ const flowservices = addKeyword(EVENTS.ACTION).addAnswer(
 
 const flowbrigades = addKeyword(EVENTS.ACTION)
   .addAnswer([
-    "La Academia Francia Belleza y Diseño Cauca, institución para el trabajo y desarrollo humano, legalmente constituida en la ciudad de Popayán desde el año 2005, con Licencia de Funcionamient#20161700124544 de 19 SEPTIEMBRE DE 2016, tiene un componente social, ofreciendo a la comunidade Popayán y municipios aledaños los SERVICIOS GRATUITOS en corte de cabello femenino, masculinmanicure tradicional, diseño de cejas entre otros",
+    "La Academia Francia Belleza y Diseño Cauca, institución para el trabajo y desarrollo humano, legalmente constituida en la ciudad de Popayán desde el año 2005, con Licencia de Funcionamiento #20161700124544 de 19 SEPTIEMBRE DE 2016, tiene un componente social, ofreciendo a la comunidades Popayán y municipios aledaños los SERVICIOS GRATUITOS en corte de cabello femenino y masculino, manicure tradicional, diseño de cejas, entre otros.",
   ])
   .addAnswer(
     conditions,
@@ -430,7 +430,7 @@ const flowmainmenu = addKeyword(EVENTS.ACTION).addAnswer(
   [
     "Marca la opción por la cual necesitas información",
     "",
-    "1) Programas Educativos",
+    "1) Programas educativos",
     "2) Servicios a realizar",
     "3) Brigadas",
     "",
@@ -537,7 +537,7 @@ const flowuserdata = addKeyword(EVENTS.ACTION)
   )
   .addAnswer(
     [
-      "Ingresa el número de  telefono celular de contacto, sin indicador de pais. ",
+      "Ingresa el número de telefono celular de contacto, sin indicador de pais. ",
       " ",
       "*Debe tener 10 digitos*",
     ],
@@ -560,7 +560,7 @@ const flowuserdata = addKeyword(EVENTS.ACTION)
   )
   .addAnswer(
     [
-      "¿En que ciudad, corregimiento o vereda te encuentras?",
+      "¿En qué ciudad, corregimiento o vereda te encuentras?",
       "",
       "*Sin números, comas, puntos o caracteres especialesa*",
     ],
@@ -601,7 +601,7 @@ const flowPrincipal = addKeyword(EVENTS.WELCOME)
     "Soy tu asistente virtual y me encanta estar aquí para ayudarte, cuenta conmigo para lo que necesites.",
   ])
   .addAnswer([
-    "Al utilizar este medio aceptas las políticas, términos y condiciones, responsabilizándote de la información que sea compartida atreves de este medio y autoriza el uso de esta misma a la *ACADEMIA FRANCIA BELLEZA Y DISEÑO CAUCA* basado en la política de tratamiento de información en http://adacemiafrancia.com.co/tratamiento-de-datos",
+    "Al utilizar este medio aceptas las políticas, términos y condiciones, responsabilizándote de la información que sea compartida a través de este medio y autoriza el uso de esta misma a la *ACADEMIA FRANCIA BELLEZA Y DISEÑO CAUCA* basado en la política de tratamiento de información en http://adacemiafrancia.com.co/tratamiento-de-datos",
   ])
   .addAnswer(
     [
